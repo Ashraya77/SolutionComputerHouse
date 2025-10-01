@@ -13,7 +13,7 @@ const categories = [
 ];
 
 const Home2 = () => {
-  return (
+    return (
     <div className="p-8 mx-45">
         <h1 className="text-orange-500 border-l-10 border-orange-500 pl-3 font-bold mb-3">
           Categories

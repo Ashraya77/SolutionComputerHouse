@@ -1,14 +1,14 @@
-"use client"
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { Search, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react'
+"use client";
+import React, { useState } from "react";
+import Link from "next/link";
+import { Search, ShoppingCart, Menu, X, User, ChevronDown } from "lucide-react";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   return (
     <nav className="bg-white sticky top-0 z-50 border-b-2 border-gray-300">
@@ -23,10 +23,18 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+            <Link
+              href="/"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
               Home
             </Link>
-
+            <Link
+              href="/about"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              About
+            </Link>
             {/* Products Dropdown */}
             <div className="relative">
               <button
@@ -39,29 +47,45 @@ const Navbar = () => {
 
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
-                  <Link href="/mobiles" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/mobiles"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
                     Mobiles
                   </Link>
-                  <Link href="/laptops" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/laptops"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
                     Laptops
                   </Link>
-                  <Link href="/computers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/computers"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
                     Computers
                   </Link>
-                  <Link href="/printers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/printers"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  >
                     Printers
                   </Link>
                 </div>
               )}
             </div>
 
-            <Link href="/classes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+            <Link
+              href="/classes"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
               Computer Classes
             </Link>
-            <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-              About
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+
+            <Link
+              href="/contact"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
               Contact
             </Link>
           </div>
@@ -80,10 +104,10 @@ const Navbar = () => {
 
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
-            <button className="text-gray-700 hover:text-blue-600 transition-colors duration-200">
-              <User className="h-6 w-6" />
-            </button>
-            <button className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative">
+            <Link href="/login" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex">
+              <User className="h-6 w-6" /> <span>Sign In</span>
+            </Link>
+            <button className="flex text-gray-700 hover:text-blue-600 transition-colors duration-200 relative">
               <ShoppingCart className="h-6 w-6" />
               <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 0
@@ -95,7 +119,11 @@ const Navbar = () => {
               onClick={toggleMenu}
               className="md:hidden text-gray-700 hover:text-blue-600 transition-colors duration-200"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -117,33 +145,57 @@ const Navbar = () => {
 
             {/* Mobile Menu Items */}
             <div className="space-y-1">
-              <Link href="/" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+              <Link
+                href="/"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
                 Home
               </Link>
               <div className="px-4 py-2">
                 <div className="text-gray-900 font-medium mb-2">Products</div>
                 <div className="space-y-1 ml-4">
-                  <Link href="/mobiles" className="block py-1 text-gray-600 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/mobiles"
+                    className="block py-1 text-gray-600 hover:text-blue-600 transition-colors"
+                  >
                     Mobiles
                   </Link>
-                  <Link href="/laptops" className="block py-1 text-gray-600 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/laptops"
+                    className="block py-1 text-gray-600 hover:text-blue-600 transition-colors"
+                  >
                     Laptops
                   </Link>
-                  <Link href="/computers" className="block py-1 text-gray-600 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/computers"
+                    className="block py-1 text-gray-600 hover:text-blue-600 transition-colors"
+                  >
                     Computers
                   </Link>
-                  <Link href="/printers" className="block py-1 text-gray-600 hover:text-blue-600 transition-colors">
+                  <Link
+                    href="/printers"
+                    className="block py-1 text-gray-600 hover:text-blue-600 transition-colors"
+                  >
                     Printers
                   </Link>
                 </div>
               </div>
-              <Link href="/classes" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+              <Link
+                href="/classes"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
                 Computer Classes
               </Link>
-              <Link href="/about" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+              <Link
+                href="/about"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
                 About
               </Link>
-              <Link href="/contact" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+              <Link
+                href="/contact"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
                 Contact
               </Link>
             </div>
@@ -159,7 +211,7 @@ const Navbar = () => {
         />
       )}
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
