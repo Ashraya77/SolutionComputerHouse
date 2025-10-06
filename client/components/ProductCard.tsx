@@ -1,5 +1,7 @@
 import React from "react";
 import { Heart } from "lucide-react";
+import useCartStore from "@/store/useCartStore";
+import { useRequireAuth } from "@/utils/requireAuth";
 
 interface CardElements {
   img: string;
@@ -7,7 +9,15 @@ interface CardElements {
   price: number;
 }
 
-const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
+const ProductCard: React.FC<CardElements> = ({ img, name, price, product}) => {
+    const addItem = useCartStore((state) => state.addItem)
+    const requireAuth = useRequireAuth();
+    const handleAddToCart = () => {
+      requireAuth(()=>{
+          addItem({ img, name, price, id: name }); 
+
+      });
+}
   return (
     <div className="relative bg-white  overflow-hidden group  transition duration-300">
       {/* Fav Button */}
@@ -24,7 +34,7 @@ const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
   />
 
         {/* Add to Cart on hover */}
-        <button className="cursor-pointer absolute bottom-0 left-0 w-full bg-black text-white py-2 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300">
+        <button onClick={handleAddToCart} className="cursor-pointer absolute bottom-0 left-0 w-full bg-black text-white py-2 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300">
           Add to Cart
         </button>
       </div>

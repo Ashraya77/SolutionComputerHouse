@@ -41,16 +41,16 @@ const Page = () => {
   const visibleProducts = showAll ? products : products.slice(0, 4);
   
   return (
-    <div className=" bg-gray-50 p-6 mx-45 ">
+    <div className=" bg-gray-50 p-6 mx-45 mt-10">
          <h1 className="text-orange-500 border-l-10 border-orange-500 pl-3 font-bold mb-3">
           Recent
         </h1>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center ">
        
-        <h1 className="space-y-2 text-3xl w-114 border-orange-500 font-bold  mb-8">
+        <h1 className="space-y-2 text-3xl w-120 border-orange-500 font-bold  mb-8">
           Get Best Deals on <span className="text-orange-400"> Smartphone</span>{" "}
         </h1>
-        <h1 className="hover:bg-black cursor-pointer bg-orange-500 p-3 font-bold text-white"> View More </h1>
+        <h1 className="hover:bg-black cursor-pointer bg-orange-500 p-3 font-bold mb-8 mr-10 text-white"> View More </h1>
       </div>
 
       {/* Cards grid */}
