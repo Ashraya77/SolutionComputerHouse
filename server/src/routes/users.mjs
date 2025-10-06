@@ -1,15 +1,17 @@
+
 import express from 'express';
 import User from '../models/users.mjs';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import cookieParser from 'cookie-parser';
+import verifyJWT from '../middleware/verifyJWT.mjs';
 
 const router = express.Router();
 router.use(cookieParser());
 
 // GET all users (without passwords)
-router.get('/', async (req, res) => {
+router.get('/', verifyJWT, async (req, res) => {
     try {
         const users = await User.find().select('-password');
         res.json(users);
@@ -18,9 +20,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ========================
 // Register API
-// ========================
 router.post(
     '/register',
     [
@@ -115,6 +115,7 @@ router.post('/logout', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 export default router;
