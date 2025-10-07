@@ -1,25 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Menu, X, User, ChevronDown, Heart } from "lucide-react";
+import { Search, Menu, X, User, ChevronDown, Heart, LogOut, user } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import useInitializeAuth from "@/hooks/useInitializeAuth";
+import apiClient from "@/lib/apiClient";
 import CartBadge from "./CartBadge";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const token = useAuthStore((state) => state.token);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
-  const mounted = useInitializeAuth();
+  const { user, clearAuth } = useAuthStore();
 
-  // wait until client mount to prevent hydration errors
-  if (!mounted) return null;
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await apiClient.post("/users/logout");
+      clearAuth(); // Clear user from Zustand store
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   return (
     <nav className="bg-white sticky top-0 z-50 border-b-2 border-gray-300">
@@ -75,7 +87,8 @@ const Navbar = () => {
 
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
-            {token ? (
+            {/* Only render this section on the client to prevent hydration mismatch */}
+            {isClient && (user ? (
               <>
                <Link href="/favorite">
                <Heart className="text-red-500 hover:text-red-600"/>
@@ -83,19 +96,24 @@ const Navbar = () => {
               <Link href="/cart" className="flex text-gray-700 hover:text-blue-600 transition-colors duration-200 relative">
              <CartBadge/>
             </Link>
-              <button
-                onClick={clearAuth}
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
-              >
-                <User className="h-6 w-6 mr-1" /> Logout
+
+              <button>
+                <User/>
               </button>
+
+             <button
+               onClick={handleLogout}
+               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
+             >
+               <LogOut className="h-6 w-6 mr-1" /> Logout
+             </button>
               </>
              
             ) : (
               <Link href="/login" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
                 <User className="h-6 w-6 mr-1" /> Sign In
               </Link>
-            )}
+            ))}
 
             
 

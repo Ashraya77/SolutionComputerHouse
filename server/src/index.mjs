@@ -4,9 +4,14 @@ import cors from 'cors';
 import userRoutes from './routes/users.mjs';
 import cartRoutes from './routes/cart.mjs';
 import productRoutes from './routes/product.mjs';
+import favoriteRoutes from './routes/favorite.mjs';
+import cookieParser from 'cookie-parser';
+
 
 const app = express();
 const PORT = 5000;
+
+app.use(cookieParser());
 
 app.use(cors({
   origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
@@ -14,9 +19,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/product', productRoutes);
+app.use('/api/favorites', favoriteRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');

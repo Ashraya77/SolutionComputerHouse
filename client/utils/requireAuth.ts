@@ -3,11 +3,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 
 export const useRequireAuth = () => {
-  const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
   const router = useRouter();
 
   const requireAuth = (callback: () => void) => {
-    if (!token) {
+    if (!user) {
       router.push("/login"); // redirect to login if not logged in
       return;
     }

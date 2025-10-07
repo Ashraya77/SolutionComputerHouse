@@ -9,15 +9,14 @@ interface CardElements {
   price: number;
 }
 
-const ProductCard: React.FC<CardElements> = ({ img, name, price, product}) => {
-    const addItem = useCartStore((state) => state.addItem)
-    const requireAuth = useRequireAuth();
-    const handleAddToCart = () => {
-      requireAuth(()=>{
-          addItem({ img, name, price, id: name }); 
-
-      });
-}
+const ProductCard: React.FC<CardElements> = ({ img, name, price, product }) => {
+  const addItem = useCartStore((state) => state.addItem);
+  const requireAuth = useRequireAuth();
+  const handleAddToCart = () => {
+    requireAuth(() => {
+      addItem({ img, name, price, id: name, quantity: 1 });
+    });
+  };
   return (
     <div className="relative bg-white  overflow-hidden group  transition duration-300">
       {/* Fav Button */}
@@ -27,14 +26,17 @@ const ProductCard: React.FC<CardElements> = ({ img, name, price, product}) => {
 
       {/* Product Image with hover Add-to-Cart */}
       <div className="relative h-70 w-80 p-10 bg-gray-200 flex justify-center items-center">
-  <img
-    src={img}
-    alt={name}
-    className="object-contain max-h-full max-w-full"
-  />
+        <img
+          src={img}
+          alt={name}
+          className="object-contain max-h-full max-w-full"
+        />
 
         {/* Add to Cart on hover */}
-        <button onClick={handleAddToCart} className="cursor-pointer absolute bottom-0 left-0 w-full bg-black text-white py-2 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300">
+        <button
+          onClick={handleAddToCart}
+          className="cursor-pointer absolute bottom-0 left-0 w-full bg-black text-white py-2 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300"
+        >
           Add to Cart
         </button>
       </div>

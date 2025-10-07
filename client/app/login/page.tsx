@@ -2,27 +2,33 @@
 import { useState } from "react";
 import Link from "next/link";
 import apiClient from "@/lib/apiClient";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const Page = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const setAuth = useAuthStore((state) => state.setAuth);
 
+  const router = useRouter();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const res = await apiClient.post("/users/login", { email, password });
-      
-      localStorage.setItem("token", res.data.token);
+      const response = await apiClient.post("/users/login", {
+        email,
+        password,
+      });
+      setAuth(response.data.user);
       alert("Login successful!");
-      window.location.href = "/"; // redirect to home or dashboard
+      router.push("/");
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || "Invalid credentials");
+      setError(err.response?.data?.error || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -42,7 +48,9 @@ const Page = () => {
       {/* Right side - Login form */}
       <div className="flex flex-col justify-center w-full md:w-1/2 bg-white p-8 md:p-16">
         <h1 className="text-4xl font-bold mb-3">Welcome back</h1>
-        <p className="text-gray-400 mb-8">Welcome back! Please enter your details</p>
+        <p className="text-gray-400 mb-8">
+          Welcome back! Please enter your details
+        </p>
 
         <form onSubmit={handleLogin}>
           {/* Email */}
@@ -104,7 +112,10 @@ const Page = () => {
         {/* Sign up link */}
         <p className="text-center text-gray-500 mt-6">
           Don't have an account?
-          <Link href="/sign-up" className="ml-2 text-black font-semibold hover:text-blue-600">
+          <Link
+            href="/sign-up"
+            className="ml-2 text-black font-semibold hover:text-blue-600"
+          >
             Sign up for free
           </Link>
         </p>

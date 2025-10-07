@@ -1,6 +1,5 @@
 "use client"
 import useCartStore from '@/store/useCartStore'
-import { useState } from 'react'
 
 export default function page() {
   const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCartStore()
@@ -25,13 +24,13 @@ export default function page() {
           <div key={item.id} className="flex items-center justify-between border-b pb-4">
             <div className="flex items-center space-x-4">
               <img 
-                src={item.image} 
+                src={item.img} 
                 alt={item.name}
                 className="w-16 h-16 object-cover rounded"
               />
               <div>
                 <h3 className="font-medium">{item.name}</h3>
-                <p className="text-gray-600">${item.price}</p>
+                <p className="text-gray-600">Rs. {item.price}</p>
               </div>
             </div>
             
@@ -65,7 +64,7 @@ export default function page() {
       
       <div className="mt-8 pt-4 border-t">
         <div className="flex justify-between items-center">
-          <span className="text-xl font-bold">Total: ${totalPrice.toFixed(2)}</span>
+          <span className="text-xl font-bold">Total: Rs. {totalPrice.toFixed(2)}</span>
           <div className="space-x-4">
             <button
               onClick={clearCart}
