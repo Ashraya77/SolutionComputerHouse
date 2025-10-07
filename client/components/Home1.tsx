@@ -1,44 +1,44 @@
 "use client";
 import React from "react";
 import ProductCard from "@/components/ProductCard"; // adjust path if needed
-import { useState } from "react";
-// Sample phone data
-const products = [
-  {
-    id: 1,
-    name: "Redmi Note 13",
-    price: 1200,
-    img: "https://m.media-amazon.com/images/I/71Pyk+c4kqL.jpg",
-  },
-  {
-    id: 2,
-    name: "iPhone 15",
-    price: 120000,
-    img: "https://m.media-amazon.com/images/I/71yzJoE7WlL._AC_UF894,1000_QL80_.jpg",
-  },
-  {
-    id: 3,
-    name: "Samsung Galaxy S24",
-    price: 95000,
-    img: "https://m.media-amazon.com/images/I/61VfL-aiToL._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    id: 4,
-    name: "OnePlus 12",
-    price: 78000,
-    img: "https://m.media-amazon.com/images/I/71VW8LmqqPL._AC_SL1500_.jpg",
-  },
-  {
-    id: 5,
-    name: "Google Pixel 9",
-    price: 87000,
-    img: "https://m.media-amazon.com/images/I/71iDxWQ7q1L._AC_UF1000,1000_QL80_.jpg",
-  },
-];
+import { useState, useEffect } from "react";
+import apiClient from "@/lib/apiClient";
+
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  category: string;
+  img: string;
+}
 
 const Page = () => {
   const [showAll, setShowAll] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
   const visibleProducts = showAll ? products : products.slice(0, 4);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await apiClient.get("/product?category=mobiles");
+        setProducts(data);
+      } catch (err) {
+        setError("Failed to fetch products.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  if (loading)
+    return (
+      <div className="text-center p-8 text-gray-600">Loading products...</div>
+    );
+  if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
   
   return (
     <div className=" bg-gray-50 p-6 mx-45 mt-10">
@@ -57,7 +57,7 @@ const Page = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {visibleProducts.map((item) => (
           <ProductCard
-            key={item.id}
+            key={item._id}
             img={item.img}
             name={item.name}
             price={item.price}

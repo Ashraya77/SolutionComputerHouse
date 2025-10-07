@@ -101,6 +101,10 @@ const Navbar = () => {
                 <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Admin</Link>
               )}
 
+              <Link href="/userProfile" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
+                <User className="h-6 w-6 mr-1" /> Profile
+              </Link>
+
              <button
                onClick={handleLogout}
                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
