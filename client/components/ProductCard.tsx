@@ -9,7 +9,7 @@ interface CardElements {
   price: number;
 }
 
-const ProductCard: React.FC<CardElements> = ({ img, name, price, product }) => {
+const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
   const addItem = useCartStore((state) => state.addItem);
   const requireAuth = useRequireAuth();
   const handleAddToCart = () => {
@@ -17,6 +17,7 @@ const ProductCard: React.FC<CardElements> = ({ img, name, price, product }) => {
       addItem({ img, name, price, id: name, quantity: 1 });
     });
   };
+  
   return (
     <div className="relative bg-white  overflow-hidden group  transition duration-300">
       {/* Fav Button */}

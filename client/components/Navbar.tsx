@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Menu, X, User, ChevronDown, Heart, LogOut, user } from "lucide-react";
+import { Search, Menu, X, User, ChevronDown, Heart, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import apiClient from "@/lib/apiClient";
 import CartBadge from "./CartBadge";
@@ -26,7 +26,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await apiClient.post("/users/logout");
-      clearAuth(); // Clear user from Zustand store
+      clearAuth(); 
       router.push("/login");
     } catch (error) {
       console.error("Logout failed", error);
@@ -94,12 +94,12 @@ const Navbar = () => {
                <Heart className="text-red-500 hover:text-red-600"/>
               </Link>
               <Link href="/cart" className="flex text-gray-700 hover:text-blue-600 transition-colors duration-200 relative">
-             <CartBadge/>
-            </Link>
+                <CartBadge/>
+              </Link>
 
-              <button>
-                <User/>
-              </button>
+              {user.role === 'admin' && (
+                <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Admin</Link>
+              )}
 
              <button
                onClick={handleLogout}

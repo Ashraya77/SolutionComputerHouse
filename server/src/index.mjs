@@ -5,6 +5,7 @@ import userRoutes from './routes/users.mjs';
 import cartRoutes from './routes/cart.mjs';
 import productRoutes from './routes/product.mjs';
 import favoriteRoutes from './routes/favorite.mjs';
+import orderRoutes from './routes/order.mjs';
 import cookieParser from 'cookie-parser';
 
 
@@ -24,6 +25,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');

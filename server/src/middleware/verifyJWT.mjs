@@ -9,7 +9,8 @@ const verifyJWT = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const user = await User.findById(decoded.userId);
     if (!user) return res.sendStatus(401);
-    req.user = user; // Attach full user object
+    req.user = user;
+    req.userId = user._id;
     next();
   } catch (err) {
     res.sendStatus(403);
