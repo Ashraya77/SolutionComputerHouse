@@ -7,7 +7,8 @@ import productRoutes from './routes/product.mjs';
 import favoriteRoutes from './routes/favorite.mjs';
 import orderRoutes from './routes/order.mjs';
 import cookieParser from 'cookie-parser';
-
+import passport from 'passport';
+import "./auth/passport.mjs";
 
 const app = express();
 const PORT = 5000;
@@ -20,7 +21,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-
+app.use(passport.initialize());
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/product', productRoutes);

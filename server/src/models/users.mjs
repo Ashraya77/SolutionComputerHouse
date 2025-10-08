@@ -11,6 +11,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows multiple documents to have a null value for this field
+    },
     password: {
       type: String,
       required: true,

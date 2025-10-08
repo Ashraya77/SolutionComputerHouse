@@ -6,6 +6,9 @@ import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import cookieParser from 'cookie-parser';
 import verifyJWT from '../middleware/verifyJWT.mjs';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+
 
 const router = express.Router();
 router.use(cookieParser());
@@ -141,6 +144,23 @@ router.get('/me', verifyJWT, async (req, res) => {
   }
 });
 
+//login with google
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const token = jwt.sign({ userId: req.user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1d" });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: "strict",
+    });
+
+    res.redirect(process.env.CLIENT_ORIGIN || "http://localhost:3000"); 
+  }
+);
 
 export default router;

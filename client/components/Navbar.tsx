@@ -17,11 +17,25 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const { user, clearAuth } = useAuthStore();
+  const { user, setAuth, clearAuth } = useAuthStore();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Effect to rehydrate auth state on load
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const response = await apiClient.get("/users/me");
+        setAuth(response.data.user);
+      } catch (error) {
+        // If the request fails (e.g., 401), it means no valid token.
+        clearAuth();
+      }
+    };
+    checkUser();
+  }, [setAuth, clearAuth]);
 
   const handleLogout = async () => {
     try {

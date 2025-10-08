@@ -34,6 +34,11 @@ const Page = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    window.location.href = `${apiUrl}/users/google`;
+  };
+
   return (
     <div className="flex min-h-screen mx-45">
       {/* Left side - Full screen image */}
@@ -107,6 +112,22 @@ const Page = () => {
 
           {/* Error message */}
           {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
+          <div className="flex items-center my-6">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="mx-4 text-gray-500">OR</span>
+            <div className="flex-grow border-t border-gray-300"></div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center bg-white text-black py-3 rounded-lg border border-gray-400 hover:bg-gray-100 transition"
+          >
+            {/* You'll need to add a Google icon to your public directory */}
+            <img src="/google.png" alt="Google icon" className="w-5 h-5 mr-3" />
+            Sign in with Google
+          </button>
         </form>
 
         {/* Sign up link */}
