@@ -13,12 +13,14 @@ interface AuthState {
   user: User | null;
   setAuth: (user: User) => void;
   clearAuth: () => void;
+  loading: boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
+      loading: true, // Start in a loading state
       setAuth: (user) => set({ user }),
       clearAuth: () => set({ user: null }),
     }),

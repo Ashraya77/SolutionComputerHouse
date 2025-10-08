@@ -1,16 +1,13 @@
 "use client";
 
 import { useAuthStore } from "@/store/useAuthStore";
-
 const UserProfilePage = () => {
-  const { user } = useAuthStore();
 
   // The layout already handles loading and redirection,
   // but it's good practice to have a fallback.
-  if (!user) {
-    return null;
-  }
-
+const {user} = useAuthStore();
+ 
+  
   return (
     <div className="bg-white p-8 rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Profile Information</h2>

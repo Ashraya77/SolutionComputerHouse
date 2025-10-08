@@ -2,23 +2,19 @@
 "use client";
 
 import { useAuthStore } from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
-import { useRef } from "react";
 
 export const useRequireAuth = () => {
-  const user = useAuthStore((state) => state.user);
-  const router = useRouter();
-  const hasRedirected = useRef(false); 
+  const { user, loading } = useAuthStore();
 
   const requireAuth = (callback: () => void) => {
+    // Wait for the initial auth check to complete before proceeding.
+    if (loading) return;
+
     if (!user) {
-      if (!hasRedirected.current) {
-        hasRedirected.current = true; // mark redirected
-        alert("You must be logged in to access this page.");
-        router.push("/login");
-      }
+      alert("You must be logged in to add items to the cart.");
       return;
     }
+
     callback();
   };
 

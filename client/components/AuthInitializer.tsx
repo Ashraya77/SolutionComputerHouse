@@ -10,8 +10,8 @@ export default function AuthInitializer({
 }: {
   children: React.ReactNode;
 }) {
-  const { setAuth, clearAuth } = useAuthStore();
-  const { mergeAndSetCart, clearCart: clearCartItems } = useCartStore();
+  const { user: existingUser, setAuth, clearAuth } = useAuthStore();
+  const { mergeAndSetCart } = useCartStore();
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
@@ -19,25 +19,40 @@ export default function AuthInitializer({
       try {
         const response = await apiClient.get("/users/me");
         const user = response.data.user;
-        setAuth(user);
-        // If user is logged in, fetch their cart and merge it with the local guest cart.
         if (user) {
-          const cartResponse = await apiClient.get('/cart');
-          const serverItems = cartResponse.data.items.map((item: any) => ({ ...item, id: item.productId }));
+          setAuth(user);
+
+          // fetch and merge cart
+          const cartResponse = await apiClient.get("/cart");
+          const serverItems = cartResponse.data.items.map((item: any) => ({
+            ...item,
+            id: item.productId,
+          }));
           mergeAndSetCart(serverItems);
+        } else {
+          // Only clear auth if there was a user in the store previously
+          if (existingUser) {
+            clearAuth();
+          }
         }
       } catch (error) {
         clearAuth();
       } finally {
         setInitialized(true);
+        useAuthStore.setState({ loading: false }); // Set loading to false
       }
     };
+
     initializeAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Use an empty dependency array to ensure this runs only once on mount.
+  }, []);
 
   if (!initialized) {
-    return <div className="flex justify-center items-center h-screen">Initializing App...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Initializing App...
+      </div>
+    );
   }
 
   return <>{children}</>;
