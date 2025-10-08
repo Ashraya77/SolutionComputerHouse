@@ -5,6 +5,7 @@ import apiClient from "@/lib/apiClient";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
+import useCartStore from "@/store/useCartStore";
 const Page = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,6 +13,7 @@ const Page = () => {
   const [error, setError] = useState("");
   const setAuth = useAuthStore((state) => state.setAuth);
 
+  const { mergeAndSetCart } = useCartStore();
   const router = useRouter();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +25,13 @@ const Page = () => {
         email,
         password,
       });
+      // 1. Set user in auth store
       setAuth(response.data.user);
+
+      // 2. Fetch server cart and merge with local cart
+      const cartResponse = await apiClient.get('/cart');
+      mergeAndSetCart(cartResponse.data.items.map((item: any) => ({ ...item, id: item.productId })));
+
       alert("Login successful!");
       router.push("/");
     } catch (err: any) {

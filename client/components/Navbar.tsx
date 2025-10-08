@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Search, Menu, X, User, ChevronDown, Heart, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import apiClient from "@/lib/apiClient";
+import useCartStore from "@/store/useCartStore";
 import CartBadge from "./CartBadge";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +19,7 @@ const Navbar = () => {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   const { user, clearAuth } = useAuthStore();
+  const { clearCart } = useCartStore();
 
   useEffect(() => {
     setIsClient(true);
@@ -27,6 +29,7 @@ const Navbar = () => {
     try {
       await apiClient.post("/users/logout");
       clearAuth(); 
+      clearCart();
       router.push("/login");
     } catch (error) {
       console.error("Logout failed", error);

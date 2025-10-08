@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import apiClient from '@/lib/apiClient';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface CartItem {
   id: string;
@@ -20,6 +20,7 @@ interface CartState {
   getTotalPrice: () => number;
   fetchCart: () => Promise<void>;
   setItems: (items: CartItem[]) => void;
+  mergeAndSetCart: (serverItems: CartItem[]) => void;
 }
 
 const useCartStore = create<CartState>()(
@@ -58,8 +59,11 @@ const useCartStore = create<CartState>()(
       },
       
       // Clear cart
-      // TODO: Implement API call to clear cart
-      clearCart: () => set({ items: [] }),
+      clearCart: async () => {
+        set({ items: [] });
+        // Optional: Call an API endpoint to clear the cart on the server as well.
+        // try { await apiClient.post('/cart/clear'); } catch (e) { console.error(e); }
+      },
       
       // Get total items count
       getTotalItems: () => get().items.reduce((total, item) => total + item.quantity, 0),
@@ -81,10 +85,30 @@ const useCartStore = create<CartState>()(
 
       // Directly set items, useful for initialization
       setItems: (items) => set({ items }),
+
+      // Merge local cart with server cart
+      mergeAndSetCart: (serverItems) => {
+        const localItems = get().items;
+        const merged = [...serverItems];
+
+        localItems.forEach(localItem => {
+          const existing = merged.find(serverItem => serverItem.id === localItem.id);
+          if (existing) {
+            // If item exists on server, use the greater quantity
+            existing.quantity = Math.max(existing.quantity, localItem.quantity);
+          } else {
+            // If item only exists locally, add it to the merged cart
+            merged.push(localItem);
+          }
+        });
+
+        set({ items: merged });
+      },
     }),
     {
       name: 'cart-storage',
-      partialize: (state) => ({ items: state.items })
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ items: state.items }), // Only persist the items array
     }
   )
 )

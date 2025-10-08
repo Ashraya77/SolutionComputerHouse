@@ -1,5 +1,6 @@
 // store/useAuthStore.ts
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface User {
   id: string;
@@ -14,8 +15,16 @@ interface AuthState {
   clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  setAuth: (user) => set({ user }),
-  clearAuth: () => set({ user: null }),
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      setAuth: (user) => set({ user }),
+      clearAuth: () => set({ user: null }),
+    }),
+    {
+      name: "auth-storage", // name of the item in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
