@@ -11,7 +11,7 @@ export default function AuthInitializer({
   children: React.ReactNode;
 }) {
   const { setAuth, clearAuth } = useAuthStore();
-  const { fetchCart, clearCart: clearCartItems } = useCartStore();
+  const { mergeAndSetCart, clearCart: clearCartItems } = useCartStore();
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
@@ -20,9 +20,11 @@ export default function AuthInitializer({
         const response = await apiClient.get("/users/me");
         const user = response.data.user;
         setAuth(user);
-        // If user is logged in, fetch their cart from the server
+        // If user is logged in, fetch their cart and merge it with the local guest cart.
         if (user) {
-          await fetchCart();
+          const cartResponse = await apiClient.get('/cart');
+          const serverItems = cartResponse.data.items.map((item: any) => ({ ...item, id: item.productId }));
+          mergeAndSetCart(serverItems);
         }
       } catch (error) {
         clearAuth();
@@ -31,7 +33,8 @@ export default function AuthInitializer({
       }
     };
     initializeAuth();
-  }, [setAuth, clearAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Use an empty dependency array to ensure this runs only once on mount.
 
   if (!initialized) {
     return <div className="flex justify-center items-center h-screen">Initializing App...</div>;
