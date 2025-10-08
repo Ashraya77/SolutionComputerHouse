@@ -1,17 +1,25 @@
 // utils/requireAuth.ts
+"use client";
+
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 export const useRequireAuth = () => {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
+  const hasRedirected = useRef(false); 
 
   const requireAuth = (callback: () => void) => {
     if (!user) {
-      router.push("/login"); // redirect to login if not logged in
+      if (!hasRedirected.current) {
+        hasRedirected.current = true; // mark redirected
+        alert("You must be logged in to access this page.");
+        router.push("/login");
+      }
       return;
     }
-    callback(); // execute the action if logged in
+    callback();
   };
 
   return requireAuth;

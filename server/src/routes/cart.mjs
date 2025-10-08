@@ -1,83 +1,65 @@
-
 import express from 'express';
-import Cart from '../models/cart.mjs';
 import verifyJWT from '../middleware/verifyJWT.mjs';
+import Cart from '../models/cart.mjs';
 
 const router = express.Router();
 
-// Get current user's cart
+// @route   GET api/cart
+// @desc    Get user's cart
+// @access  Private
 router.get('/', verifyJWT, async (req, res) => {
-	try {
-		const cart = await Cart.findOne({ user: req.userId }).populate('items.product');
-		res.json(cart || { items: [] });
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
+  try {
+    const cart = await Cart.findOne({ userId: req.userId });
+    if (!cart) {
+      return res.json({ items: [] });
+    }
+    res.json(cart);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
-// Add item to cart
+// @route   POST api/cart/add
+// @desc    Add an item to the cart
+// @access  Private
 router.post('/add', verifyJWT, async (req, res) => {
-	try {
-		const { productId, quantity } = req.body;
-		if (!productId || !quantity) return res.status(400).json({ error: 'Product and quantity required' });
-		let cart = await Cart.findOne({ user: req.userId });
-		if (!cart) {
-			cart = new Cart({ user: req.userId, items: [] });
-		}
-		const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
-		if (itemIndex > -1) {
-			cart.items[itemIndex].quantity += quantity;
-		} else {
-			cart.items.push({ product: productId, quantity });
-		}
-		await cart.save();
-		res.json(cart);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
+  const { id: productId, name, price, img } = req.body;
+
+  // Guard: ensure userId exists
+  if (!req.userId) return res.status(401).json({ msg: 'Unauthorized' });
+
+  // Validate product data
+  if (!productId || !name || typeof price !== 'number' || !img) {
+    return res.status(400).json({ msg: 'Product information is missing or invalid' });
+  }
+
+  try {
+    // Find existing cart for user
+    let cart = await Cart.findOne({ userId: req.userId });
+
+    // If cart doesn't exist, create it
+    if (!cart) {
+      cart = new Cart({ userId: req.userId, items: [] });
+    }
+
+    // Check if product already exists in cart
+    const existingItem = cart.items.find(item => item.productId === productId);
+
+    if (existingItem) {
+      existingItem.quantity = (existingItem.quantity || 0) + 1;
+    } else {
+      cart.items.push({ productId, name, price, img, quantity: 1 });
+    }
+
+    await cart.save();
+    res.json(cart); // Return the full cart object
+  } catch (err) {
+    console.error('Cart add error:', err.message);
+    res.status(500).json({ msg: 'Server Error' });
+  }
 });
 
-// Update item quantity
-router.put('/update', verifyJWT, async (req, res) => {
-	try {
-		const { productId, quantity } = req.body;
-		let cart = await Cart.findOne({ user: req.userId });
-		if (!cart) return res.status(404).json({ error: 'Cart not found' });
-		const item = cart.items.find(item => item.product.toString() === productId);
-		if (!item) return res.status(404).json({ error: 'Item not found' });
-		item.quantity = quantity;
-		await cart.save();
-		res.json(cart);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-});
-
-// Remove item from cart
-router.delete('/remove', verifyJWT, async (req, res) => {
-	try {
-		const { productId } = req.body;
-		let cart = await Cart.findOne({ user: req.userId });
-		if (!cart) return res.status(404).json({ error: 'Cart not found' });
-		cart.items = cart.items.filter(item => item.product.toString() !== productId);
-		await cart.save();
-		res.json(cart);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-});
-
-// Clear cart
-router.delete('/clear', verifyJWT, async (req, res) => {
-	try {
-		let cart = await Cart.findOne({ user: req.userId });
-		if (!cart) return res.status(404).json({ error: 'Cart not found' });
-		cart.items = [];
-		await cart.save();
-		res.json(cart);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-});
+// You can add more routes here for removing items, updating quantity, etc.
 
 export default router;
