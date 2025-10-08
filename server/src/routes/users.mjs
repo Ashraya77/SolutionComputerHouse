@@ -159,7 +159,8 @@ router.get(
       sameSite: "strict",
     });
 
-    res.redirect(process.env.CLIENT_ORIGIN || "http://localhost:3000"); 
+     // Redirect to frontend route that fetches user
+    res.redirect(`${process.env.CLIENT_URL}/auth/google/success`);
   }
 );
 
