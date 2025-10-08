@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,18 +11,19 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isInitializing } = useAuthStore();
+  const { user } = useAuthStore();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // After initialization, if there's no user or the user is not an admin, redirect.
-    if (!isInitializing && (!user || user.role !== "admin")) {
+    setIsClient(true);
+    if (isClient && (!user || user.role !== "admin")) {
       router.push("/");
     }
-  }, [user, isInitializing, router]);
+  }, [user, isClient, router]);
 
-  // Show loading state while initializing or if the user is not an admin.
-  if (isInitializing || !user || user.role !== "admin") {
+  // Show loading state while client is mounting or if the user is not an admin.
+  if (!isClient || !user || user.role !== "admin") {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 

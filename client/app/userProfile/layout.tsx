@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,18 +11,22 @@ export default function UserProfileLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isInitializing } = useAuthStore();
+  const { user } = useAuthStore();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    // Only redirect if initialization is complete and there's no user
-    if (!isInitializing && !user) {
+ useEffect(() => {
+    setIsClient(true);
+ }, []);
+
+ useEffect(() => {
+    if (isClient && !user) {
       router.push("/login");
     }
-  }, [user, isInitializing, router]);
+ }, [user, isClient, router]);
 
-  if (isInitializing || !user) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (!user) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>; // Or a spinner
   }
 
   return (
@@ -34,6 +38,7 @@ export default function UserProfileLayout({
             <nav className="space-y-2">
               <Link href="/userProfile" className="flex items-center p-2 rounded hover:bg-gray-100"><User className="mr-3 h-5 w-5" />Profile</Link>
               <Link href="/userProfile/orders" className="flex items-center p-2 rounded hover:bg-gray-100"><ShoppingCart className="mr-3 h-5 w-5" />My Orders</Link>
+              <Link href="/userProfile/wishlist" className="flex items-center p-2 rounded hover:bg-gray-100"><ShoppingCart className="mr-3 h-5 w-5" />Wishlist</Link>
               <Link href="/userProfile/settings" className="flex items-center p-2 rounded hover:bg-gray-100"><Settings className="mr-3 h-5 w-5" />Settings</Link>
             </nav>
           </div>

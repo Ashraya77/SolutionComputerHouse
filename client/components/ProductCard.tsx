@@ -17,6 +17,8 @@ const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
       addItem({ img, name, price, id: name, quantity: 1 });
     });
   };
+
+
   
   return (
     <div className="relative bg-white  overflow-hidden group  transition duration-300">

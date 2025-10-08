@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import apiClient from "@/lib/apiClient";
 
 export default function AuthInitializer() {
-  const { setAuth } = useAuthStore();
+  const { setAuth, clearAuth } = useAuthStore();
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -13,11 +14,13 @@ export default function AuthInitializer() {
         const response = await apiClient.get("/users/me");
         setAuth(response.data.user);
       } catch (error) {
-        // User is not logged in, or token is invalid. No action needed.
+        clearAuth();
+      } finally {
+        setInitialized(true);
       }
     };
     initializeAuth();
-  }, [setAuth]);
+  }, [setAuth, clearAuth]);
 
-  return null; // This component does not render anything
+  return initialized ? null : <div className="flex justify-center items-center h-screen">Initializing App...</div>;
 }
