@@ -11,17 +11,17 @@ export default function UserProfileLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuthStore();
+  const { user, isInitializing } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-   
-    if (user === null) {
+    // Only redirect if initialization is complete and there's no user
+    if (!isInitializing && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, isInitializing, router]);
 
-  if (!user) {
+  if (isInitializing || !user) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 

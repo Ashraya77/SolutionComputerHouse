@@ -11,18 +11,18 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuthStore();
+  const { user, isInitializing } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    // If the user data is loaded and the user is not an admin, redirect them.
-    if (user && user.role !== "admin") {
+    // After initialization, if there's no user or the user is not an admin, redirect.
+    if (!isInitializing && (!user || user.role !== "admin")) {
       router.push("/");
     }
-  }, [user, router]);
+  }, [user, isInitializing, router]);
 
-  // While waiting for user data or if user is not an admin, show a loading state.
-  if (!user || user.role !== "admin") {
+  // Show loading state while initializing or if the user is not an admin.
+  if (isInitializing || !user || user.role !== "admin") {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 

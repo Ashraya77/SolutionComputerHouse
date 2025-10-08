@@ -13,16 +13,20 @@ interface User {
 
 interface AuthState {
   user: User | null;
+  isInitializing: boolean;
   setAuth: (user: User) => void;
   clearAuth: () => void;
+  setInitializing: (isInitializing: boolean) => void;
 }
 
 export const useAuthStore = create(
   persist<AuthState>(
     (set) => ({
       user: null,
+      isInitializing: true, // Start in an initializing state
       setAuth: (user) => set({ user }),
       clearAuth: () => set({ user: null }),
+      setInitializing: (isInitializing) => set({ isInitializing }),
     }),
     {
       name: "auth-storage", // name of the item in the storage (must be unique)

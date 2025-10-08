@@ -17,7 +17,7 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const { user, setAuth, clearAuth } = useAuthStore();
+  const { user, setAuth, clearAuth, setInitializing } = useAuthStore();
 
   useEffect(() => {
     setIsClient(true);
@@ -28,14 +28,18 @@ const Navbar = () => {
     const checkUser = async () => {
       try {
         const response = await apiClient.get("/users/me");
-        setAuth(response.data.user);
+        if (response.data.user) {
+          setAuth(response.data.user);
+        }
       } catch (error) {
         // If the request fails (e.g., 401), it means no valid token.
         clearAuth();
+      } finally {
+        setInitializing(false); // Mark initialization as complete
       }
     };
     checkUser();
-  }, [setAuth, clearAuth]);
+  }, [setAuth, clearAuth, setInitializing]);
 
   const handleLogout = async () => {
     try {
