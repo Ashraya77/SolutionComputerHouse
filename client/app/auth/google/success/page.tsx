@@ -14,7 +14,7 @@ export default function GoogleSuccessPage() {
     const fetchUser = async () => {
       try {
         const res = await apiClient.get("/users/me");
-        setAuth(res.data);
+        setAuth(res.data.user);
 
         // Optionally merge cart
         const cartRes = await apiClient.get("/cart");
