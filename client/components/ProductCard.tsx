@@ -4,18 +4,18 @@ import useCartStore from "@/store/useCartStore";
 import { useRequireAuth } from "@/utils/requireAuth";
 
 interface CardElements {
+  id: string;
   img: string;
   name: string;
   price: number;
-  quantity: number;
 }
 
-const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
+const ProductCard: React.FC<CardElements> = ({ id, img, name, price }) => {
   const addItem = useCartStore((state) => state.addItem);
   const requireAuth = useRequireAuth();
   const handleAddToCart = () => {
     requireAuth(() => {
-      addItem({ img, name, price, id: name, quantity: 1 });
+      addItem({ img, name, price, id });
     });
   };
 

@@ -3,6 +3,8 @@ import Product from '../models/product.mjs';
 import verifyJWT from '../middleware/verifyJWT.mjs';
 import admin from '../middleware/admin.mjs';
 
+import crypto from 'crypto';
+
 const router = express.Router();
 
 // @desc    Get all products
@@ -32,6 +34,7 @@ router.post('/', verifyJWT, admin, async (req, res) => {
     const { name, price, description, category, img } = req.body;
 
     const product = new Product({
+      productId: crypto.randomBytes(8).toString('hex'),
       name,
       price,
       description,
@@ -42,7 +45,8 @@ router.post('/', verifyJWT, admin, async (req, res) => {
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
-    res.status(500).json({ error: 'Server error while creating product' });
+    console.error('Error creating product:', error);
+    res.status(500).json({ error: error.message || 'Server error while creating product' });
   }
 });
 

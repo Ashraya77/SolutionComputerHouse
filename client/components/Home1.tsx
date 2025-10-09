@@ -58,6 +58,7 @@ const Page = () => {
         {visibleProducts.map((item) => (
           <ProductCard
             key={item._id}
+            id={item._id}
             img={item.img}
             name={item.name}
             price={item.price}
