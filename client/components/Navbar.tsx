@@ -64,7 +64,7 @@ const Navbar = () => {
 
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
-                  <Link href="/mobiles" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Mobiles</Link>
+                  <Link href="/products/mobiles" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Mobiles</Link>
                   <Link href="/laptops" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Laptops</Link>
                   <Link href="/computers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Computers</Link>
                   <Link href="/printers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Printers</Link>
@@ -90,7 +90,7 @@ const Navbar = () => {
 
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
-            {/* Only render this section on the client to prevent hydration mismatch */}
+            {/* Only render this section on the cient to prevent hydration mismatch */}
             {isClient && (user ? (
               <>
                <Link href="/favorite">
