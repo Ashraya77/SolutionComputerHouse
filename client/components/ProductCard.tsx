@@ -7,6 +7,7 @@ interface CardElements {
   img: string;
   name: string;
   price: number;
+  quantity: number;
 }
 
 const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {

@@ -43,6 +43,16 @@ export default function Home3() {
                         src="https://images.unsplash.com/photo-1585687501004-615dfdfde7f1?q=80&h=800&w=800&auto=format&fit=crop"
                         alt="image" />
                 </div>
+                <div className="relative group flex-grow transition-all w-56 rounded-lg overflow-hidden h-[400px] duration-500 hover:w-full">
+                    <img className="h-full w-full object-cover object-center"
+                        src="https://images.unsplash.com/photo-1585687501004-615dfdfde7f1?q=80&h=800&w=800&auto=format&fit=crop"
+                        alt="image" />
+                </div>
+                <div className="relative group flex-grow transition-all w-56 rounded-lg overflow-hidden h-[400px] duration-500 hover:w-full">
+                    <img className="h-full w-full object-cover object-center"
+                        src="https://images.unsplash.com/photo-1585687501004-615dfdfde7f1?q=80&h=800&w=800&auto=format&fit=crop"
+                        alt="image" />
+                </div>
             </div>
                     </div>
 
