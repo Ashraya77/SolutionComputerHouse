@@ -26,14 +26,14 @@ const CartItemSchema = new Schema({
   },
 });
 
-const CartSchema = new Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    unique: true,
+const CartSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
+    items: [CartItemSchema], // use your defined CartItemSchema
   },
-  items: [CartItemSchema],
-}, { timestamps: true });
+  { timestamps: true } // <-- schema option
+);
 
 export default mongoose.model('Cart', CartSchema);
+
+

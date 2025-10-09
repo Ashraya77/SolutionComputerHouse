@@ -16,6 +16,7 @@ interface AuthState {
   loading: boolean;
 }
 
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({

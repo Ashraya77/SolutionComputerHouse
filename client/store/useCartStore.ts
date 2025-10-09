@@ -13,7 +13,7 @@ interface CartItem {
 interface CartState {
   items: CartItem[];
   addItem: (product: Omit<CartItem, 'quantity'>) => Promise<void>;
-  removeItem: (productId: string) => void;
+  removeItem: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getTotalItems: () => number;
@@ -42,27 +42,47 @@ const useCartStore = create<CartState>()(
         }
       },
       
-      // Remove item from cart
-      removeItem: (productId) => {
-        // TODO: Implement API call to remove item
-        set({ items: get().items.filter(item => item.id !== productId) });
+      removeItem: async (productId) => {
+        try {
+          const response = await apiClient.post('/cart/remove', { productId });
+          const cartItems = response.data.items.map((item: any) => ({ ...item, id: item.productId }));
+          set({ items: cartItems });
+        } catch (error) {
+          console.error("Failed to remove item from cart", error);
+          // Fallback to optimistic update on error
+          set({ items: get().items.filter(item => item.id !== productId) });
+        }
       },
       
       // Update item quantity
-      updateQuantity: (productId, quantity) => {
-        // TODO: Implement API call to update quantity
+      updateQuantity: async (productId, quantity) => {
         if (quantity <= 0) {
-          get().removeItem(productId);
+          await get().removeItem(productId);
           return;
         }
-        set({ items: get().items.map(item => item.id === productId ? { ...item, quantity } : item) });
+        // Optimistic update
+        const originalItems = get().items;
+        const updatedItems = originalItems.map(item => item.id === productId ? { ...item, quantity } : item);
+        set({ items: updatedItems });
+
+        try {
+          await apiClient.post('/cart/update', { productId, quantity });
+        } catch (error) {
+          console.error("Failed to update quantity", error);
+          set({ items: originalItems }); // Revert on error
+        }
       },
       
       // Clear cart
       clearCart: async () => {
+        const originalItems = get().items;
         set({ items: [] });
-        // Optional: Call an API endpoint to clear the cart on the server as well.
-        // try { await apiClient.post('/cart/clear'); } catch (e) { console.error(e); }
+        try {
+          await apiClient.post('/cart/clear');
+        } catch (error) {
+          console.error("Failed to clear cart on server", error);
+          set({ items: originalItems }); // Revert on error
+        }
       },
       
       // Get total items count
