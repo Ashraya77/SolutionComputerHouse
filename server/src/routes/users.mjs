@@ -109,7 +109,7 @@ router.post(
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // true in production
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day, matching JWT expiry
       });
 
@@ -156,7 +156,7 @@ router.get(
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
      // Redirect to frontend route that fetches user

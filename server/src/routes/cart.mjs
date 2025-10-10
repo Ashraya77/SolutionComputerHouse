@@ -35,7 +35,7 @@ router.post('/add', verifyJWT, async (req, res) => {
   try {
     // Atomically add or update the cart
     const cart = await Cart.findOneAndUpdate(
-      { user: req.userId }, // search by user
+      { user: req.userId }, 
       {
         $setOnInsert: { user: req.userId, items: [] }, // create cart if not exists
       },
