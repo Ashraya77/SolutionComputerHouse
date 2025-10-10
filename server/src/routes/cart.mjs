@@ -24,42 +24,37 @@ router.get('/', verifyJWT, async (req, res) => {
 // @desc    Add an item to the cart
 // @access  Private
 router.post('/add', verifyJWT, async (req, res) => {
-  const { id: productId, name, price, img } = req.body;
-
-  if (!req.userId) return res.status(401).json({ msg: 'Unauthorized' });
-
-  if (!productId || !name || typeof price !== 'number' || !img) {
-    return res.status(400).json({ msg: 'Product information is missing or invalid' });
-  }
-
   try {
-    // Atomically add or update the cart
-    const cart = await Cart.findOneAndUpdate(
-      { user: req.userId }, 
-      {
-        $setOnInsert: { user: req.userId, items: [] }, // create cart if not exists
-      },
-      { upsert: true, new: true }
-    );
+    const userId = req.userId; // MUST use req.userId
+    if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
-    // Check if product already exists
-    const existingItem = cart.items.find(item => item.productId === productId);
-
-    if (existingItem) {
-      existingItem.quantity = (existingItem.quantity || 0) + 1;
-    } else {
-      cart.items.push({ productId, name, price, img, quantity: 1 });
+    const { productId, name, price, img, quantity = 1 } = req.body;
+    if (!productId || !name || !price || !img) {
+      return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    cart.markModified('items'); // needed for Mongoose to detect array changes
-    await cart.save();
+    let cart = await Cart.findOne({ user: userId });
 
-    res.json(cart);
-  } catch (err) {
-    console.error('Cart add error:', err.message);
-    res.status(500).json({ msg: 'Server Error' });
+    if (!cart) {
+      cart = new Cart({ user: userId, items: [] });
+    }
+
+    const existingItem = cart.items.find(item => item.productId.toString() === productId);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.items.push({ productId, name, price, img, quantity });
+    }
+
+    await cart.save();
+    res.status(200).json({ message: 'Item added to cart', cart });
+  } catch (error) {
+    console.error('Add to Cart Error:', error);
+    res.status(500).json({ message: 'Server error while adding to cart' });
   }
 });
+
+
 
 // You can add more routes here for removing items, updating quantity, etc.
 // @route   POST api/cart/remove

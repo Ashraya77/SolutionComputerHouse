@@ -4,11 +4,12 @@ import useCartStore from "@/store/useCartStore";
 import { useRequireAuth } from "@/utils/requireAuth";
 
 interface CardElements {
+  _id: string;
   img: string;
   name: string;
   price: number;
-  quantity: number;
 }
+
 
 const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
   const addItem = useCartStore((state) => state.addItem);
