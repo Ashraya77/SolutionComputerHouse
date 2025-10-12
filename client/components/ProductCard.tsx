@@ -4,26 +4,29 @@ import useCartStore from "@/store/useCartStore";
 import { useRequireAuth } from "@/utils/requireAuth";
 
 interface CardElements {
-  _id: string;
-  img: string;
+  id: string; 
+  img: string; 
   name: string;
   price: number;
 }
 
-
-const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
+const ProductCard: React.FC<CardElements> = ({ id, img, name, price }) => {  // ✅ Add id to destructuring
   const addItem = useCartStore((state) => state.addItem);
   const requireAuth = useRequireAuth();
-  const handleAddToCart = () => {
-    requireAuth(() => {
-      addItem({ img, name, price, id: name, quantity: 1 });
+
+ const handleAddToCart = () => {
+    console.log("Product id value:", id); // ✅ Add this line
+  requireAuth(() => {
+    console.log("Sending to cart:", { id, quantity: 1 }); // ✅ Add this
+    addItem({
+      id: id,
+      quantity: 1
     });
-  };
+  });
+}
 
-
-  
   return (
-    <div className="relative bg-white  overflow-hidden group  transition duration-300">
+    <div className="relative bg-white overflow-hidden group transition duration-300">
       {/* Fav Button */}
       <button className="absolute top-3 right-12 bg-white p-2 rounded-full shadow hover:bg-red-100 transition z-10">
         <Heart className="w-5 h-5 text-red-500" />
@@ -36,7 +39,6 @@ const ProductCard: React.FC<CardElements> = ({ img, name, price }) => {
           alt={name}
           className="object-contain max-h-full max-w-full"
         />
-
         {/* Add to Cart on hover */}
         <button
           onClick={handleAddToCart}

@@ -1,39 +1,50 @@
 import mongoose from 'mongoose';
-const { Schema } = mongoose;
-
-const CartItemSchema = new Schema({
-  productId: {
-    type: String, // Using name as product ID for now as in the frontend
-    required: true,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 1,
-    default: 1,
-  },
-  img: {
-    type: String,
-    required: true,
-  },
-});
 
 const CartSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
-    items: [CartItemSchema], // use your defined CartItemSchema
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    //  unique: true,
+    },
+    items: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        img: {
+          type: String,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+          default: 1,
+        },
+        addedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
-  { timestamps: true } // <-- schema option
+  {
+    timestamps: true,
+  }
 );
 
+CartSchema.index({ user: 1 });
+
 export default mongoose.model('Cart', CartSchema);
-
-

@@ -10,12 +10,17 @@ interface CartItem {
   quantity: number;
 }
 
+interface AddToCartPayload {
+  id: string;
+  quantity: number;
+}
+
 interface CartState {
   items: CartItem[];
-  addItem: (product: CartItem) => Promise<void>;
+  addItem: (product: AddToCartPayload) => Promise<void>;
   removeItem: (productId: string) => Promise<void>;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  clearCart: () => Promise<void>;
   getTotalItems: () => number;
   getTotalPrice: () => number;
   fetchCart: () => Promise<void>;
@@ -33,25 +38,27 @@ const useCartStore = create<CartState>()(
         try {
           const payload = {
             productId: product.id,
-            name: product.name,
-            price: product.price,
-            img: product.img,
             quantity: product.quantity || 1,
           };
-
+          console.log("Sending payload:", payload);
           const response = await apiClient.post("/cart/add", payload);
           console.log("Added to cart:", response.data);
 
           const cartItems = response.data.cart.items.map((item: any) => ({
-            ...item,
-            id: item.productId,
+            id: item.productId._id || item.productId,
+            productId: item.productId._id || item.productId,
+            name: item.name,
+            price: item.price,
+            img: item.img,
+            quantity: item.quantity,
           }));
 
-          set({ items: cartItems }); // ✅ fixed key
+          set({ items: cartItems });
         } catch (error: any) {
+          console.error("Add to cart full error:", error);
           console.error(
             "Add to cart error:",
-            error.response?.data || error.message
+            error.response?.data || error.message || error
           );
         }
       },
@@ -59,9 +66,12 @@ const useCartStore = create<CartState>()(
       removeItem: async (productId) => {
         try {
           const response = await apiClient.post("/cart/remove", { productId });
-          const cartItems = response.data.items.map((item: any) => ({
-            ...item,
-            id: item.productId,
+          const cartItems = response.data.cart.items.map((item: any) => ({
+            id: item.productId._id || item.productId,
+            name: item.name,
+            price: item.price,
+            img: item.img,
+            quantity: item.quantity,
           }));
           set({ items: cartItems });
         } catch (error) {
@@ -110,8 +120,11 @@ const useCartStore = create<CartState>()(
         try {
           const response = await apiClient.get("/cart");
           const cartItems = response.data.items.map((item: any) => ({
-            ...item,
-            id: item.productId,
+            id: item.productId._id || item.productId,
+            name: item.name,
+            price: item.price,
+            img: item.img,
+            quantity: item.quantity,
           }));
           set({ items: cartItems });
         } catch (error) {
