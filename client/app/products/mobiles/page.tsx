@@ -54,8 +54,13 @@ const MobilesPage = () => {
         <p className="text-center text-gray-500">No mobile phones found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product._id} {...product} />
+          {products.map((item) => (
+            <ProductCard  
+            key={item._id}
+           id={item._id}  // ✅ ADD THIS LINE
+            img={item.img}
+            name={item.name}
+            price={item.price} />
           ))}
         </div>
       )}
