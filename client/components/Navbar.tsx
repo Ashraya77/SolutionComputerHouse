@@ -2,12 +2,22 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Menu, X, User, ChevronDown, Heart, LogOut } from "lucide-react";
+import {
+  Search,
+  Menu,
+  X,
+  User,
+  ChevronDown,
+  Heart,
+  LogOut,
+  MessageCircle,
+} from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import apiClient from "@/lib/apiClient";
 import useCartStore from "@/store/useCartStore";
 import CartBadge from "./CartBadge";
 import { useRouter } from "next/navigation";
+import Example from "./Example";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,17 +35,6 @@ const Navbar = () => {
     setIsClient(true);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await apiClient.post("/users/logout");
-      clearAuth(); 
-      clearCart();
-      router.push("/login");
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
-
   return (
     <nav className="bg-white sticky top-0 z-50 border-b-2 border-gray-300">
       <div className="max-w-8xl mx-40 px-4 sm:px-6 lg:px-8">
@@ -49,9 +48,18 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Home</Link>
-            <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">About</Link>
-
+            <Link
+              href="/"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              Home
+            </Link>
+            <Link
+              href="/about"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              About
+            </Link>
             {/* Products Dropdown */}
             <div className="relative">
               <button
@@ -64,16 +72,46 @@ const Navbar = () => {
 
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
-                  <Link href="/products/mobiles" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Mobiles</Link>
-                  <Link href="/products/laptops" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Laptops</Link>
-                  <Link href="/products/computers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Computers</Link>
-                  <Link href="/products/printers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Printers</Link>
+                  <Link
+                    href="/products/mobiles"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Mobiles
+                  </Link>
+                  <Link
+                    href="/products/laptops"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Laptops
+                  </Link>
+                  <Link
+                    href="/products/computers"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Computers
+                  </Link>
+                  <Link
+                    href="/products/printers"
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    Printers
+                  </Link>
                 </div>
               )}
             </div>
 
-            <Link href="/classes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Computer Classes</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">Contact</Link>
+            <Link
+              href="/classes"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              Computer Classes
+            </Link>
+            <Link
+              href="/contact"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              Contact
+            </Link>
           </div>
 
           {/* Search */}
@@ -91,42 +129,49 @@ const Navbar = () => {
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
             {/* Only render this section on the cient to prevent hydration mismatch */}
-            {isClient && (user ? (
-              <>
-               <Link href="/favorite">
-               <Heart className="text-red-500 hover:text-red-600"/>
-              </Link>
-              <Link href="/cart" className="flex text-gray-700 hover:text-blue-600 transition-colors duration-200 relative">
-                <CartBadge/>
-              </Link>
+            {isClient &&
+              (user ? (
+                <>
+                  <Link href="/favorite">
+                    <MessageCircle className="text-red-500 hover:text-red-600" />
+                  </Link>
+                  <Link
+                    href="/cart"
+                    className="flex text-gray-700 hover:text-blue-600 transition-colors duration-200 relative"
+                  >
+                    <CartBadge />
+                  </Link>
 
-              {user.role === 'admin' && (
-                <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Admin</Link>
-              )}
+                  {user.role === "admin" && (
+                    <Link
+                      href="/dashboard"
+                      className="text-gray-700 hover:text-blue-600 font-medium"
+                    >
+                      Admin
+                    </Link>
+                  )}
 
-              <Link href="/userProfile" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
-                <User className="h-6 w-6 mr-1" /> Profile
-              </Link>
-
-             <button
-               onClick={handleLogout}
-               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
-             >
-               <LogOut className="h-6 w-6 mr-1" /> Logout
-             </button>
-              </>
-             
-            ) : (
-              <Link href="/login" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center">
-                <User className="h-6 w-6 mr-1" /> Sign In
-              </Link>
-            ))} 
-
-            
+                  <Example />
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center"
+                >
+                  <User className="h-6 w-6 mr-1" /> Sign In
+                </Link>
+              ))}
 
             {/* Mobile menu button */}
-            <button onClick={toggleMenu} className="md:hidden text-gray-700 hover:text-blue-600 transition-colors duration-200">
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <button
+              onClick={toggleMenu}
+              className="md:hidden text-gray-700 hover:text-blue-600 transition-colors duration-200"
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -146,28 +191,73 @@ const Navbar = () => {
             </div>
 
             <div className="space-y-1">
-              <Link href="/" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Home</Link>
+              <Link
+                href="/"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+              >
+                Home
+              </Link>
 
               <div className="px-4 py-2">
                 <div className="text-gray-900 font-medium mb-2">Products</div>
                 <div className="space-y-1 ml-4">
-                  <Link href="/mobiles" className="block py-1 text-gray-600 hover:text-blue-600">Mobiles</Link>
-                  <Link href="/laptops" className="block py-1 text-gray-600 hover:text-blue-600">Laptops</Link>
-                  <Link href="/computers" className="block py-1 text-gray-600 hover:text-blue-600">Computers</Link>
-                  <Link href="/printers" className="block py-1 text-gray-600 hover:text-blue-600">Printers</Link>
+                  <Link
+                    href="/mobiles"
+                    className="block py-1 text-gray-600 hover:text-blue-600"
+                  >
+                    Mobiles
+                  </Link>
+                  <Link
+                    href="/laptops"
+                    className="block py-1 text-gray-600 hover:text-blue-600"
+                  >
+                    Laptops
+                  </Link>
+                  <Link
+                    href="/computers"
+                    className="block py-1 text-gray-600 hover:text-blue-600"
+                  >
+                    Computers
+                  </Link>
+                  <Link
+                    href="/printers"
+                    className="block py-1 text-gray-600 hover:text-blue-600"
+                  >
+                    Printers
+                  </Link>
                 </div>
               </div>
 
-              <Link href="/classes" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Computer Classes</Link>
-              <Link href="/about" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">About</Link>
-              <Link href="/contact" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Contact</Link>
+              <Link
+                href="/classes"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+              >
+                Computer Classes
+              </Link>
+              <Link
+                href="/about"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+              >
+                About
+              </Link>
+              <Link
+                href="/contact"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+              >
+                Contact
+              </Link>
             </div>
           </div>
         )}
       </div>
 
       {/* Dropdown backdrop */}
-      {isDropdownOpen && <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />}
+      {isDropdownOpen && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setIsDropdownOpen(false)}
+        />
+      )}
     </nav>
   );
 };

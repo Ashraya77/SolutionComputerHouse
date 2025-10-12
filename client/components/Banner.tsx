@@ -1,5 +1,5 @@
 import React from "react";
-
+import BannerSwipper from '@/components/MotionBanner'
 const Banner = () => {
   return (
     <section className="flex flex-col md:flex-row h-[40vh] mx-45">
@@ -18,11 +18,7 @@ const Banner = () => {
 
       {/* Banner */}
       <div className="flex-1  flex justify-center items-center text-white ">
-        <img
-          src="banner.jpg"
-          alt="Banner"
-          className=" h-[45vh] w-full p-8 object-cover mt-5"
-        />
+       <BannerSwipper/>
       </div>
     </section>
   );
