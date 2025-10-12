@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import { Heart } from "lucide-react";
 import useCartStore from "@/store/useCartStore";
@@ -10,7 +11,7 @@ interface CardElements {
   price: number;
 }
 
-const ProductCard: React.FC<CardElements> = ({ id, img, name, price }) => {  // ✅ Add id to destructuring
+const ProductCard: React.FC<CardElements> = ({ id, img, name, price }) => { 
   const addItem = useCartStore((state) => state.addItem);
   const requireAuth = useRequireAuth();
 

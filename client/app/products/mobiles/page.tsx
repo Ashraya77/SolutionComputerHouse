@@ -1,6 +1,3 @@
-"use client";
-import { useState, useEffect } from "react";
-import apiClient from "@/lib/apiClient";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 
@@ -11,34 +8,26 @@ interface Product {
   img: string;
 }
 
-const MobilesPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function MobilesPage() {
+  let products: Product[] = [];
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { data } = await apiClient.get("/product?category=mobiles");
-        setProducts(data);
-      } catch (err) {
-        setError("Failed to fetch products.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product?category=mobiles`, {
+      next: { revalidate: 60 }, // ISR caching: refresh every 60s
+    });
 
-  if (loading) {
-    return (
-      <div className="text-center p-8 text-gray-600">Loading products...</div>
-    );
+    if (!res.ok) throw new Error("Failed to fetch products");
+    products = await res.json();
+  } catch (error) {
+    console.error("Error fetching mobiles:", error);
   }
 
-  if (error) {
-    return <div className="text-center p-8 text-red-500">{error}</div>;
+  if (!products.length) {
+    return (
+      <div className="text-center p-8 text-gray-500">
+        No mobile phones found.
+      </div>
+    );
   }
 
   return (
@@ -50,22 +39,17 @@ const MobilesPage = () => {
         </Link>
       </div>
 
-      {products.length === 0 ? (
-        <p className="text-center text-gray-500">No mobile phones found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((item) => (
-            <ProductCard  
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {products.map((item) => (
+          <ProductCard
             key={item._id}
-           id={item._id}  // ✅ ADD THIS LINE
+            id={item._id}
             img={item.img}
             name={item.name}
-            price={item.price} />
-          ))}
-        </div>
-      )}
+            price={item.price}
+          />
+        ))}
+      </div>
     </div>
   );
-};
-
-export default MobilesPage;
+}

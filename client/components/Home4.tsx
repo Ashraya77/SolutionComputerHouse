@@ -1,8 +1,6 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import ProductCard from "@/components/ProductCard"; // adjust path if needed
+// pages/index.tsx OR app/page.tsx
+import ProductCard from "@/components/ProductCard"; // must be a client component
 import Link from "next/link";
-import apiClient from "@/lib/apiClient";
 
 interface Product {
   _id: string;
@@ -12,42 +10,40 @@ interface Product {
   img: string;
 }
 
-const Home4 = () => {
-  const [showAll, setShowAll] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const visibleProducts = showAll ? products : products.slice(0, 8);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// ✅ Mark the component async to use await
+export default async function Home4() {
+  let products: Product[] = [];
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { data } = await apiClient.get("/product");
-        setProducts(data);
-      } catch (err) {
-        setError("Failed to fetch products.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product`, {
+      next: { revalidate: 60 }, // ISR caching
+    });
 
-  if (loading)
+    if (!res.ok) throw new Error("Failed to fetch products");
+
+    products = await res.json();
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+
+  if (!products.length) {
     return (
-      <div className="text-center p-8 text-gray-600">Loading products...</div>
+      <div className="text-center p-8 text-gray-500">
+        No products found.
+      </div>
     );
-  if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
+  }
+
+  const topProducts = products.slice(0, 8);
 
   return (
-    <div className="bg-gray-50 p-6 mx-45 mt-20">
-      <h1 className="text-orange-500 border-l-10 border-orange-500 pl-3 font-bold mb-3">
+    <div className="bg-gray-50 p-6 mt-20 mx-45">
+      <h1 className="text-orange-500 border-l-4 border-orange-500 pl-3 font-bold mb-3">
         Our Products
       </h1>
 
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold mb-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">
           Get Best Deals on{" "}
           <span className="text-orange-400">Tech Products</span>
         </h1>
@@ -55,9 +51,10 @@ const Home4 = () => {
 
       {/* Cards grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {visibleProducts.map((item) => (
+        {topProducts.map((item) => (
           <ProductCard
             key={item._id}
+            id={item._id} // ✅ if ProductCard uses id for add-to-cart
             img={item.img}
             name={item.name}
             price={item.price}
@@ -66,7 +63,7 @@ const Home4 = () => {
       </div>
 
       {/* View All Button */}
-      {!showAll && products.length > 8 && (
+      {products.length > 8 && (
         <div className="flex justify-center mt-6">
           <Link
             href="/products"
@@ -78,6 +75,4 @@ const Home4 = () => {
       )}
     </div>
   );
-};
-
-export default Home4;
+}
