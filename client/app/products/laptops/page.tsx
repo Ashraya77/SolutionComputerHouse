@@ -12,7 +12,7 @@ export default async function MobilesPage() {
   let products: Product[] = [];
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product?category=mobiles`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product?category=laptops`, {
       next: { revalidate: 60 }, // ISR caching: refresh every 60s
     });
 
@@ -33,7 +33,7 @@ export default async function MobilesPage() {
   return (
     <div className="mx-45 px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Smartphones</h1>
+        <h1 className="text-3xl font-bold">Laptops</h1>
         <Link href="/products" className="text-blue-600 hover:underline">
           View All Products
         </Link>
